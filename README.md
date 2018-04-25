@@ -16,3 +16,9 @@
   Use enrichment table to find significant clusters:
   
        python ~/Github/GO-term-enrichment/Test_Fisher.py tableforEnrichment_D21_down_cluster1.txt 1
+       
+ 3. Get only the significant under (-) or over (+) represented clusters
+ 
+        python ~/Github/GO-term-enrichment/parse_enrichment_get_sig.py <.pqvalue file>
+        
+ ## Variations
