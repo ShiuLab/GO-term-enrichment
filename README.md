@@ -21,4 +21,8 @@
  
         python ~/Github/GO-term-enrichment/parse_enrichment_get_sig.py <.pqvalue file>
         
+ 4. Merge GO term description into results file 
+ 
+        python ~/Github/GO-term-enrichment/merge_description.py -key [GO term key] -table [output from step 3] 
+        
  ## Variations
