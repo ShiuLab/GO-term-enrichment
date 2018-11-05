@@ -104,7 +104,7 @@ for feature in feature_dict_pos:
         #print (gene_num)
         count4 = gene_num - (count1 + count2 + count3) #number is based on the # of genes from cluster file- in this case 20998
 
-        output.write('%s %s\t%i\t%i\t%i\t%i\n' % (feature, genetype, count1, count2, count3, count4))
+        output.write('%s_%s\t%i\t%i\t%i\t%i\n' % (feature, genetype, count1, count2, count3, count4))
 
 output.close()
 matrix_file.close()            
