@@ -13,6 +13,13 @@
     
 2. do fisher's exact test
 
+  Before doing the FET, purge module and load R modules:
+  
+        module purge
+        module load GCC/7.3.0-2.30
+        module load OpenMPI/3.1.1
+        module load R/3.5.1-X11-20180604
+  
   Use enrichment table to find significant clusters:
   
        python ~/Github/GO-term-enrichment/Test_Fisher.py tableforEnrichment_D21_down_cluster1.txt 1
