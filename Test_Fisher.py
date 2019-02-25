@@ -18,7 +18,7 @@ the rest of  population    |           t3                |              t4
     t3 number of objects not in the subset having this property
     t4 number of objects not in the subset without a given property
 """
-
+##fisher package on hpc is fisher/0.1.4
 def fisher(tuple_t):# every 4 number tuple
 	global t
 	"""
@@ -36,12 +36,15 @@ def fisher(tuple_t):# every 4 number tuple
 	f = FisherExactTest()
 	p=f.pvalue(t1,t2+t1,t1+t3,t1+t2+t4+t3)
 	en=f.enrichment(t1,t2+t1,t1+t3,t1+t2+t4+t3)
-	
-	if en >= 1:
-		en="+" #using right hand side Ha :u
-		
+	print(en)
+	if type(en) == float:
+	    if en >= 1:
+	       en="+" #using right hand side Ha :u
+	    else:
+	       en="-"
+	    
 	else:
-		en="-"
+	   en= 'NA'
 		
 	#print p
  
@@ -60,13 +63,19 @@ def get_q(file,path):
 	tmpR.write("test$V8<-q\n")
 	tmpR.write("write.table(test,file=%r,quote=F,eol= %r ,row.names=F,col.names=F,sep=%r)\n" % ('%s.qvalue' % file,'\n','\t'))
 	tmpR.close()
+	os.system("module purge")
+	os.system("module load GCC/7.3.0-2.30")
+	os.system("module load OpenMPI/3.1.1")
+	os.system("module load R/3.5.1-X11-20180604")
 	os.system("R CMD BATCH %s_tmp.R" % file)
+	#os.system("R --vanilla --slave > %s_tmp.R" % file)
 
 
 if __name__ == '__main__':
 	
 	import os,sys
-	sys.path.append("/mnt/home/seddonal/scripts/6_motif_mapping")
+	#sys.path.append("/mnt/home/seddonal/scripts/6_motif_mapping")
+	sys.path.append("/mnt/home/john3784/Github/GO-term-enrichment")
 	from fisher import FisherExactTest
 	
 	if len(sys.argv)<3:

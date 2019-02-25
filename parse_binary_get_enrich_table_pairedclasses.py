@@ -1,3 +1,9 @@
+'''makes the following enrichment table for each pair of classes:
+                           |  having a given property    |  not having a given property
+---------------------------------------------------------------------------------------
+subset of  population      |           t1                |              t2
+the rest of  population    |           t3                |              t4
+'''
 import sys, os
 
 matrix_file = open(sys.argv[1], 'r') # binary matrix file with all features and genetype comparisons: binary_matrix-domain_matrix.txt_comparisons.txt
@@ -78,33 +84,38 @@ for feature in feature_dict_pos:
     gene_list_pos_len = len(gene_list_pos)
     #print gene_list_for_go
     for genetype in genetype_dict:
-        gene_list2nd = genetype_dict[genetype]
-        # if genetype == gene_type:
-        #     gene_list2nd = genetype_dict[genetype]
-        # else:
-        #     gene_listother = genetype_dict[genetype]
-        count1 = 0
-        count2 = 0
-        count3 = 0
-        count4 = 0
-        for gene in gene_list_pos:
-            if gene in gene_list2nd: 
-                count1 = count1 + 1 #SM/pos gene type that is pos
-            else:
-                count2 = count2 + 1 #other genetype that is pos
+        genetype1= genetype.split("_")[2]
+        if genetype1 == "within":
+            gene_list1 = genetype_dict[genetype]
+            genetype2= genetype.split("_")[0] + "_" + genetype.split("_")[1] + "_between"
+            try:
+                gene_list2 = genetype_dict[genetype2]
+                
+            except(KeyError):
+                print(genetype, " has no pair")
+                gene_list2= []
+                
+            count1 = 0
+            count2 = 0
+            count3 = 0
+            count4 = 0
+            for gene in gene_list_pos:
+                if gene in gene_list1: 
+                    count1 = count1 + 1 #SM/pos gene type that is pos
+                elif gene in gene_list2:
+                    count3 = count3 + 1 #other genetype that is pos
     #print (count1)
-        neg_list=[]
-        for gene in gene_list_neg:
-            if gene in gene_list2nd:
-                neg_list.append(gene)
-        #print (len(neg_list))
-        #count3 = len(gene_list2nd) - count1 #SM/pos genetype- pos = SM not in feature
-        count3= len(neg_list)
-    #print (count3)
-        #print (gene_num)
-        count4 = gene_num - (count1 + count2 + count3) #number is based on the # of genes from cluster file- in this case 20998
+            neg_list=[]
+            for gene in gene_list_neg:
+                if gene in gene_list1:
+                    count2= count2+1 #SM/pos genetype is negative
+                elif gene in gene_list2:
+                    count4= count4+1 #other genetype is negative
+    
+            output.write('%s_%s\t%i\t%i\t%i\t%i\n' % (feature, genetype, count1, count2, count3, count4))
+        else:
+            pass
 
-        output.write('%s_%s\t%i\t%i\t%i\t%i\n' % (feature, genetype, count1, count2, count3, count4))
-
+print('done!')
 output.close()
 matrix_file.close()            
