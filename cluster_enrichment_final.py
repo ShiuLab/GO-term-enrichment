@@ -1,9 +1,14 @@
 import sys, os
-#python cluster_enrichment_031814_2.py clusterfile Go-annotfile outputfile
-cluster_result = sys.argv[1] #contains gene: cluster
-go_annot = open(sys.argv[2], 'r') #contains GO term: gene or pathway info- gene:pathway
-#genenum= int(sys.argv[3]) #number of genes in total for A. thaliana this is 27511
-
+#python cluster_enrichment_final.py clusterfile Go-annotfile
+genenum = "NA"
+for i in range (1,len(sys.argv),2):
+            if sys.argv[i] == "-genenum":  # must be an integer: 1 for using all genes in cluster file \
+                #as negative, 2 for using all genes in path/GOfile as negative or an interger other than 1 or 2 to use as negative 
+                genenum = int(sys.argv[i+1])
+            if sys.argv[i] == "-cl":
+                cluster_result = sys.argv[i+1] #contains gene:cluster
+            if sys.argv[i] == "-go":
+                go_annot = open(sys.argv[i+1], 'r') #contains GO term: gene or pathway info- pathway:gene
 
 ### make gene and cluster dictionary
 cluster_result_open = open(cluster_result, 'r')
@@ -25,7 +30,7 @@ while line:
     if len(info) >= 2:
         gene = info[0]
         
-        gene= gene.split('.')[0] #added for cucumber genes
+        gene= gene.split('.')[0].lower() #added for cucumber genes
         #genel2= (genel[0],genel[1])
         #print (genel2)
         #gene= '.'.join(genel2)
@@ -59,6 +64,7 @@ def add_go_to_dict(go_annot, dict, expre_gen):
         info = line.strip().split("\t")
         if len(info) >= 2:
             gene = info[1] # gene ID
+            gene= gene.split('.')[0].lower()
             pathway = info[0] # GO term
             pathway = clear_space(pathway)
             #if gene in expre_gen:
@@ -73,17 +79,28 @@ def add_go_to_dict(go_annot, dict, expre_gen):
                     dict[pathway] = [gene]
             else:
                 pass
+    return dict,genler_list
 dict = {} #dictionary should be GOterm:genes                        
-add_go_to_dict(go_annot, dict, expre_gen)
-#print (dict)
-print ("number of path genes", len(dict.keys()))
+godict, genler_list= add_go_to_dict(go_annot, dict, expre_gen)
+print (godict)
+print ("number of paths", len(godict.keys()))
 print ("number of cluster genes", len(expre_gen))
 ## make table for enrichment comparing clusters and GO terms, how many clusters represent 'x' GO term?
 output_table = open('tableforEnrichment_%s' % cluster_result, 'w') # output is GOterm_cluster#, inclust-inGO, inclust-notGO, notclust-inGO, notclust-notGO
-genenum= len(expre_gen) #to compare just genes in your genelist (not all genes), use this genenumber
+if genenum != "NA":
+	if genenum == 1:
+		genenum= len(expre_gen) #to compare just genes in your cluster list (not all genes), use this genenumber
+	elif genenum == 2:
+		genenum= len(genler_list) #to compare to all genes in pathway/GO list
+	else:
+		genenum=genenum
+else:
+	genenum= len(genler_list) #compares to all genes in pathway or GO list
+print("number of genes in all gene list",genenum)
+
 for item in dict:
     #item:GO-ID
-    gene_list_for_go = dict[item]
+    gene_list_for_go = godict[item]
     #print gene_list_for_go
     for i in dict_cluster.keys():
         cluster_list = dict_cluster[i]
