@@ -1,5 +1,21 @@
 # GO-term-enrichment
 
+## Objective
+To get enrichment of gene expression clusters using GO-terms or pathways
+
+## Pathway or GO term formatting
+Files downloaded from PMN (Plant Metabolic Network) or GO (gene ontology) need to be formatted correctly for the next steps.
+
+### Pathway files
+1. Obtain pathway file downloaded from PMN for your species: https://pmn.plantcyc.org/ containing the pathway and genes annotated to that pathway
+2. Get the file into pathway:gene format:
+
+        python parse_plantcyc_file_getpath-gene.py <pathway file from PMN> <index where genes are> <index where pathway name is> <index where path ID is>
+        
+        example:
+        
+        python ~/Desktop/post_doc/scripts/2_coexpress_pthwy/parse_plantcyc_file_getpath-gene.py All_instances_of_Pathways_in_Zea_mays_mays.txt 3 0 5
+
 ## Cluster enrichment
 1. get enrichment table with a cluster file
 
@@ -13,13 +29,6 @@
     
 2. do fisher's exact test
 
-  Before doing the FET, purge module and load R modules and reload python:
-  
-        module purge
-        module load GCC/7.3.0-2.30
-        module load OpenMPI/3.1.1
-        module load R/3.5.1-X11-20180604
-        module load Python/3.7.0
   
   Use enrichment table to find significant clusters:
   
