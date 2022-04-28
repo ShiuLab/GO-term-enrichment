@@ -16,7 +16,7 @@ feature_list = []
 line = matrix_file.readline()
 x = line.strip().split('\t')
 feature_list = x[2:]
-    
+print(feature_list)   
 print("getting genes")
 def get_genes(inp, D, D2, feature_list):
     header= inp.readline()
@@ -37,15 +37,15 @@ def get_genes(inp, D, D2, feature_list):
 get_genes(matrix_file, genetype_dict, genecond_dict, feature_list)
 gene_num = len(genecond_dict.keys()) 
 #281print (gene_num)
-#print genetype_dict
-#print genecond_dict
+#print (genetype_dict)
+#print (genecond_dict)
 #print feature_list  
 
 feature_dict_pos= {}
 feature_dict_neg= {}
 n = len(feature_list)
 print("getting pos and neg features")
-for i in range(0,n-1):
+for i in range(0,n):
     name = str(feature_list[i])
     #neg_name = str(feature_list[i]) + '_neg'
     #print pos_name
@@ -112,7 +112,7 @@ for feature in feature_dict_pos:
                 elif gene in gene_list2:
                     count4= count4+1 #other genetype is negative
     
-            output.write('%s_%s\t%i\t%i\t%i\t%i\n' % (feature, genetype, count1, count2, count3, count4))
+            output.write('%s|%s\t%i\t%i\t%i\t%i\n' % (feature, genetype, count1, count2, count3, count4))
         else:
             pass
 
