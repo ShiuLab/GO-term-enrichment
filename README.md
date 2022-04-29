@@ -98,4 +98,32 @@ To associate genes, get gene association file from phytozome- this has gene and 
         
         parse_enrich_get_sig_clust_for_path.py -dir ./ -split "|" -path pathA,pathB,pathC
  
- ## Variations
+ 6. Obtain a binary matrix of significant clusters where genes are the row names and columns are the cluster. 1 represents the gene is present in the cluster, 0 represents the gene is absent in the cluster.
+    
+     options:
+       
+      REQUIRED:
+        
+      -cl = file with enrichment for significant clusters (format is .fisher.pqvalue)... if you want all clusters use -cl ALL
+        
+      -dir = directory with cluster files where file contains: gene \t cluster
+        
+      -path = file with pathway \t gene
+      
+      OPTIONAL:
+        
+      -genes = list of genes you want to extract. This option only gets a matrix that contains clusters with this list of genes
+        
+      -pval = p-value cutoff for cluster significance
+        
+      -qval = q-value cutoff for cluster significance
+      
+      OUTPUT:
+        
+      binary matrix: filename_binmatrix.txt
+        
+      example:
+        
+        python get_binmatrix_for_genes_in_sigclust.py -cl ALL -dir cluster_dir/ -path All_instances_of_Pathways_in_Zea_mays_mays.txt.parsed.txt_newID.txt 
+ 
+## Variations
