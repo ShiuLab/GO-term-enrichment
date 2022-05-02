@@ -5,9 +5,10 @@ given a cluster file, pathway file, and significant enrichment file, gets binary
 significantly enriched and 0= gene not enriched in a given cluster. Gene's pathway also written as second column.
 INPUT:
 REQUIRED:
--cl = file with enrichment for significant clusters (format is .fisher.pqvalue)... if you want all clusters use -cl ALL
+-cl = file with enrichment for significant clusters (from parse_enrich_get_sig_clust.py: format is filename + .fisher.pqvalue)... 
+	if you want all clusters use -cl ALL
 -dir = directory with cluster files where file contains: gene \t cluster
--path = file with pathway \t gene
+-path = file with gene, pathways: path1//path2//
 OPTIONAL:
 -genes = list of genes you want to extract. This option only gets a matrix that contains clusters with this list of genes
 -pval = p-value cutoff for cluster significance
@@ -31,7 +32,7 @@ for i in range (1,len(sys.argv),2):
 	if sys.argv[i] == '-dir':
 		clustdir= sys.argv[i+1] # directory with cluster files where file contains: gene \t cluster
 	if sys.argv[i] == '-path':
-		path_file= open(sys.argv[i+1],'r') # file with pathway \t gene
+		path_file= open(sys.argv[i+1],'r') # file with gene, pathways: path1//path2//
 	if sys.argv[i] == '-genes':
 		GENE_LIST= sys.argv[i+1].strip().split(',')
 		GENE_LIST= [i.lower() for i in GENE_LIST]
@@ -54,14 +55,12 @@ def get_sig_clusts(inp, D, PVAL, QVAL):
 	for line in inp:
 		L= line.strip().split('\t')
 		fileinfo= L[0]
-		# print(fileinfo)
-		#print(L[2])
 		clust= L[2]
-		#print(clust)
 		pval= L[8]
 		qval= L[9]
 		clust=clear_quotes(clust)
 		clust= str(clust)
+		print(clust)
 		if PVAL != "":
 			if float(pval) <= PVAL:
 				if fileinfo not in D.keys():
@@ -88,45 +87,31 @@ if sig_clust != "ALL":
 	print(clust_dict)
 	sig_clust_file.close()
 
-# def get_path_dict(inp, D):
-# 	header= inp.readline()
-# 	for line in inp:
-# 		L= line.strip().split('\t')
-# 		pathID= L[0]
-# 		gene= L[1].split('.')[0].lower()
-# 		gene= clear_quotes(gene)
-# 		if gene not in D.keys():
-# 			D[gene]=[pathID]
-# 		else:
-# 			D[gene].append(pathID)
-# 			
-# 	return D
-
 def get_path_dict(inp, D):
-	header= inp.readline()
+	header= inp.readline().strip().split('\t')
+	header_len= len(header)
+	header_len2= header_len-2
 	for line in inp:
 		L= line.strip().split('\t')
 		gene= L[0].split('.')[0].lower()
 		gene= clear_quotes(gene)
 		enzyme= [L[1]]
-		if len(L[1:]) > 2:
-			if len(L[1:])==6:
-				data = L[2:7]
-			if len(L[1:])==5:
-				data = L[2:6]
-				data.append("NA")
+		if len(L)==header_len:
+			data= L[2:]
 		else:
-			data = ['NA',"NA","NA","NA","NA"]
+			data=[]
+			for i in range(header_len2):
+				data.append("NA")
 		data2= enzyme+data
 		if gene not in D.keys():
 			D[gene]=data2
 		else:
 			print(gene," duplicate gene")
 			
-	return D
+	return D, header
 
 D2={}
-path_dict= get_path_dict(path_file, D2)
+path_dict, pheader= get_path_dict(path_file, D2)
 print(path_dict)
 path_file.close()
 
@@ -162,11 +147,7 @@ if sig_clust == "ALL":
 		geneclust_file.close()
 		for key in geneclust_dict.keys():
 			genelist= geneclust_dict[key]
-				#if len(genelist) > 200:
-				#	pass
-				#else:
 			cluster_fin=str(file)+"_"+str(key)
-					#print(cluster_fin)
 			if len(GENE_LIST)== 0:
 				if cluster_fin not in clust_fin_list:
 					clust_fin_list.append(cluster_fin)
@@ -217,17 +198,14 @@ else:
 					geneclust_dict[clust]=[gene]
 				else:
 					geneclust_dict[clust].append(gene)
-			#print(geneclust_dict)
+
 			geneclust_file.close()
 			for clust in clust_list:
 				if clust in geneclust_dict.keys():
 					print(clust)
 					genelist= geneclust_dict[clust]
-					#if len(genelist) > 200:
-					#	pass
-					#else:
 					cluster_fin=str(file)+"_"+str(clust)
-					#print(cluster_fin)
+
 					if len(GENE_LIST)== 0:
 						if cluster_fin not in clust_fin_list:
 							clust_fin_list.append(cluster_fin)
@@ -264,8 +242,10 @@ else:
 print(gene_dict)
 
 output= open(str(sig_clust)+"_binmatrix.txt","w")
-headerstr= "\t".join(clust_fin_list)
-output.write("gene\tenzyme\tPathways\tReactions\tReactants\tProducts\tSuperpath\t%s\n" % headerstr)
+headerstr1= "\t".join(pheader)
+headerstr2= "\t".join(clust_fin_list)
+output.write('%s\t%s\n' % (headerstr1,headerstr2))
+pheadlen=len(pheader)-1
 
 for gene in all_gene_list:
 	gclust_list= gene_dict[gene]
@@ -275,7 +255,10 @@ for gene in all_gene_list:
 		print(paths)
 		pathstr= "\t".join(paths)
 	else:
-		pathstr= "NA\tNA\tNA\tNA\tNA\tNA"
+		path1=[]
+		for i in range(pheadlen):
+			path1.append("NA")
+		pathstr= "\t".join(path1)
 	output.write("%s\t" % pathstr)
 	for clust in clust_fin_list:
 		if clust in gclust_list:
