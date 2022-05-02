@@ -38,29 +38,35 @@ gene_num = len(genecond_dict.keys())
 feature_dict_pos= {}
 feature_dict_neg= {}
 n = len(feature_list)
-print("getting pos and neg features")
+print("getting pos and neg features", len(feature_list))
 for i in range(0,n):
     name = str(feature_list[i])
     #neg_name = str(feature_list[i]) + '_neg'
-    #print pos_name
+    #print (name)
     for gene in genecond_dict:
         #print gene
         feature_cond = genecond_dict[gene]
-        feature_cond2 = feature_cond[i]
-        #print feature_cond2
-        if feature_cond2 == '1':
-            #print feature_cond2
-            if name not in feature_dict_pos:
-                feature_dict_pos[name] = [gene]
-            else:
-                feature_dict_pos[name].append(gene)
-        elif feature_cond2 == '0':
+        if len(feature_cond) == 0:
             if name not in feature_dict_neg:
                 feature_dict_neg[name] = [gene]
             else:
                 feature_dict_neg[name].append(gene)
         else:
-            pass
+            feature_cond2 = feature_cond[i]
+            #print (feature_cond2)
+            if float(feature_cond2) == float(1):
+                #print feature_cond2
+                if name not in feature_dict_pos:
+                    feature_dict_pos[name] = [gene]
+                else:
+                    feature_dict_pos[name].append(gene)
+            elif float(feature_cond2) == float(0):
+                if name not in feature_dict_neg:
+                    feature_dict_neg[name] = [gene]
+                else:
+                    feature_dict_neg[name].append(gene)
+            else:
+                pass
         
 #print (feature_dict_neg)
 #print (feature_dict_pos)
@@ -90,20 +96,20 @@ for feature in feature_dict_pos:
         if gene in gene_list2nd: 
             count1 = count1 + 1 #SM/pos gene type that is pos
         else:
-            count2 = count2 + 1 #other genetype that is pos
+            count3 = count3 + 1 #other genetype that is pos
     #print (count1)
     neg_list=[]
     for gene in gene_list_neg:
         if gene in gene_list2nd:
-            neg_list.append(gene)
+            neg_list.append(gene) #SM/pos gene type that is neg
     #print (len(neg_list))
         #count3 = len(gene_list2nd) - count1 #SM/pos genetype- pos = SM not in feature
-    count3= len(neg_list)
+    count2= len(neg_list)
     #print (len(gene_list2nd))
     #count3 = len(gene_list2nd) - count1 #SM/pos genetype- pos = SM not in feature
     #print (count3)
     #print (gene_num)
-    count4 = gene_num - (count1 + count2 + count3) #number is based on the # of genes from cluster file- in this case 20998
+    count4 = gene_num - (count1 + count2 + count3) #other genetype that is neg -number is based on the # of genes from cluster file
 
     output.write('%s\t%i\t%i\t%i\t%i\n' % (feature, count1, count2, count3, count4))
 

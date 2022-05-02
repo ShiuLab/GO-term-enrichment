@@ -46,20 +46,23 @@ for i in range(0,n-1):
     for gene in genecond_dict:
         #print gene
         feature_cond = genecond_dict[gene]
-        feature_cond2 = feature_cond[i]
-        #print feature_cond2
-        if feature_cond2 == '1':
+        try:
+            feature_cond2 = feature_cond[i]
             #print feature_cond2
-            if name not in feature_dict_pos:
-                feature_dict_pos[name] = [gene]
+            if feature_cond2 == '1':
+                #print feature_cond2
+                if name not in feature_dict_pos:
+                    feature_dict_pos[name] = [gene]
+                else:
+                    feature_dict_pos[name].append(gene)
+            elif feature_cond2 == '0':
+                if name not in feature_dict_neg:
+                    feature_dict_neg[name] = [gene]
+                else:
+                    feature_dict_neg[name].append(gene)
             else:
-                feature_dict_pos[name].append(gene)
-        elif feature_cond2 == '0':
-            if name not in feature_dict_neg:
-                feature_dict_neg[name] = [gene]
-            else:
-                feature_dict_neg[name].append(gene)
-        else:
+                pass
+        except IndexError:
             pass
         
 #print (feature_dict_neg)
