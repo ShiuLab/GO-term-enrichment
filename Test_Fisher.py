@@ -121,10 +121,11 @@ if __name__ == '__main__':
 	if q=="1":
 
 		get_q("%s_temp_fisher.test" % file,path)
-# 		os.system("mv %s_temp_fisher.test.qvalue %s.fisher.pqvalue" % (file,file))
+		 
+		os.system("mv %s_temp_fisher.test.qvalue %s.fisher.pqvalue" % (file,file))
 # 
-# 		os.system("rm %s_temp_fisher.test_tmp.R" % file)
-# 		os.system("rm %s_temp_fisher.test_tmp.Rout" % file)
-# 		os.system("rm %s_temp_fisher.test" % file)
-# 		os.system("rm %s_overflow_error" % file)
+		os.system("rm %s_temp_fisher.test_tmp.R" % file)
+		os.system("rm %s_temp_fisher.test_tmp.Rout" % file)
+		os.system("rm %s_temp_fisher.test" % file)
+		os.system("rm %s_overflow_error" % file)
 

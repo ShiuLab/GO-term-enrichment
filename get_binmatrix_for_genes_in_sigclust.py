@@ -120,12 +120,16 @@ clust_fin_list=[]
 all_gene_list=[]
 if sig_clust == "ALL":
 	for file in os.listdir(clustdir):
+		print(file)
 		geneclust_file = open(clustdir+"/"+str(file))
 		geneclust_dict={}
 		header= geneclust_file.readline()
-		if file.endswith("_default_node.txt") or file.endswith("_defaultnode.txt"):
+		if file.endswith("_default_node.txt") or file.endswith("_defaultnode.txt") or file.endswith("_defaultnode_mod.txt"):
+			print(file)
 			clust= str(file.split("_default")[0])
+			print(clust)
 			for line in geneclust_file:
+				print(line)
 				L= line.strip().split('\t')
 				gene= L[0].split('.')[0].lower()
 				gene= clear_quotes(gene)
@@ -143,11 +147,12 @@ if sig_clust == "ALL":
 					geneclust_dict[clust]=[gene]
 				else:
 					geneclust_dict[clust].append(gene)
-		print(geneclust_dict)
+		#print(geneclust_dict)
 		geneclust_file.close()
 		for key in geneclust_dict.keys():
 			genelist= geneclust_dict[key]
-			cluster_fin=str(file)+"_"+str(key)
+			#cluster_fin=str(file)+"_"+str(key)
+			cluster_fin=str(key)
 			if len(GENE_LIST)== 0:
 				if cluster_fin not in clust_fin_list:
 					clust_fin_list.append(cluster_fin)
@@ -252,7 +257,7 @@ for gene in all_gene_list:
 	output.write("%s\t" % gene)
 	if gene in path_dict.keys():
 		paths= path_dict[gene]
-		print(paths)
+		#print(paths)
 		pathstr= "\t".join(paths)
 	else:
 		path1=[]
