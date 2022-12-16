@@ -44,6 +44,7 @@ To associate genes, get gene association file from phytozome- this has gene and 
         result: .annotation_info.txt.parsed.txt file with pfam and Go descriptions
 
 ## Cluster enrichment
+NOTE: With pathway, GO, or cluster file, need to get rid of certain characters “, ‘, / for enrichment, specificially Test_Fisher.py to work
 1. get enrichment table with a cluster file
 
    Need: a cluster tab-delimited file which lists gene:cluster
